@@ -27,6 +27,36 @@ public class PulsarConsumerConfig {
     String subscriptionName;
 
     @Bean
+    public MessageListener getMessageListener() {
+        MessageListener<Observation> myMessageListener = (consumer, msg) -> {
+            try {
+                log.info("Topic Name: {}", msg.getTopicName());
+                log.info("Key: {}", msg.getKey());
+                log.info("Producer Name: {}", msg.getProducerName());
+                log.info("Publish Time: {}", String.valueOf(msg.getPublishTime()));
+                Observation observation = msg.getValue();
+                log.info("Observation: {}",observation.toString());
+                consumer.acknowledge(msg);
+            } catch (Exception e) {
+                log.error("Failed receiver", e);
+                consumer.negativeAcknowledge(msg);
+            }
+        };
+
+        return myMessageListener;
+    }
+
+    @Bean
+    public Consumer<Observation> getConsumer(MessageListener myMessageListener)
+            throws PulsarClientException {
+        return pulsarClient.newConsumer(JSONSchema.of(Observation.class))
+                .topic(topicName)
+                .subscriptionName(subscriptionName)
+                .messageListener(myMessageListener)
+                .subscribe();
+    }
+
+    @Bean
     public Consumer<Observation> getConsumer() {
         Consumer<Observation> pulsarConsumer = null;
         ConsumerBuilder<Observation> consumerBuilder =

@@ -13,8 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- *
+ * Not used in message listener version
+ * only needed for manual consumer
+ * message listener is more practical
  */
 @Service
 public class PulsarService {
@@ -26,6 +27,9 @@ public class PulsarService {
 
     @Autowired
     Consumer<Observation> consumer;
+
+    @Autowired
+    MessageListener messageListener;
 
     /**
      * consume to pulsar
@@ -45,11 +49,6 @@ public class PulsarService {
             } catch (PulsarClientException e) {
                 log.error("Consume Failure", e);
             }
-            log.debug("Pulsar  v:" + msg.getValue());
-            log.debug("Received k:" + msg.getKey());
-            log.debug("Received p,t:" + msg.getProducerName()
-                    + "," + msg.getEventTime() );
-            log.debug("Received ID:" + msg.getMessageId() );
 
             Observation observation = msg.getValue();
             observation.setKey(msg.getKey());
