@@ -261,7 +261,7 @@ public class Observation {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Observation.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", "" ,"")
                 .add("dateObserved='" + dateObserved + "'")
                 .add("hourObserved=" + hourObserved)
                 .add("localTimeZone='" + localTimeZone + "'")
@@ -272,11 +272,6 @@ public class Observation {
                 .add("parameterName='" + parameterName + "'")
                 .add("aqi=" + aqi)
                 .add("category=" + category)
-                .add("additionalProperties=" + additionalProperties)
-                .add("key='" + key + "'")
-                .add("producerName='" + producerName + "'")
-                .add("eventTime='" + eventTime + "'")
-                .add("messageId='" + messageId + "'")
                 .toString();
     }
 }
