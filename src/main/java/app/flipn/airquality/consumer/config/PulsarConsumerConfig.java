@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class PulsarConsumerConfig {
@@ -42,7 +43,7 @@ public class PulsarConsumerConfig {
                 consumer.negativeAcknowledge(msg);
             }
         };
-
+        
         return myMessageListener;
     }
 
@@ -52,7 +53,11 @@ public class PulsarConsumerConfig {
         return pulsarClient.newConsumer(JSONSchema.of(Observation.class))
                 .topic(topicName)
                 .subscriptionName(subscriptionName)
+                .subscriptionType(SubscriptionType.Key_Shared)
+                .subscriptionInitialPosition(SubscriptionInitialPosition.Earliest)
+                .receiverQueueSize(5)
                 .messageListener(myMessageListener)
+                .ackTimeout(10, TimeUnit.SECONDS)
                 .subscribe();
     }
 
@@ -64,6 +69,8 @@ public class PulsarConsumerConfig {
                         .topic(topicName)
                         .subscriptionName(subscriptionName)
                         .subscriptionType(SubscriptionType.Shared)
+                        .ackTimeout(10, TimeUnit.SECONDS)
+                        .receiverQueueSize(5)
                         .subscriptionInitialPosition(SubscriptionInitialPosition.Earliest)
                         .consumerName(consumerName);
         try {
